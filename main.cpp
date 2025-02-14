@@ -81,6 +81,33 @@ void addPath() {
     }
 }
 
+vector<string> getPaths() {
+    vector<string> lines;
+
+    string home = getenv("HOME");
+    ifstream backupPaths(home + "/.local/share/byterush/path");
+    
+    string line;
+
+    while(getline(backupPaths, line)) {
+        lines.push_back(line);
+    }
+
+    return lines;
+}
+
+void listPaths() {
+    vector<string> lines = getPaths();
+
+    cout << "Listing paths:\n\n";
+
+    int index = 1;
+    for (string line : lines) {
+        cout << index << " - " << line << endl;
+        index++;
+    }
+}
+
 string opening() {
     return getUser() + ", hello in Byterush!\n";
 }
@@ -88,6 +115,7 @@ string opening() {
 int main(int argc, char* argv[]) {
     map<string, function<void()>> commands = {
         {"add", addPath},
+        {"list", listPaths}
     };
 
     string command = argv[1];
