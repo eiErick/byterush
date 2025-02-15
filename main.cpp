@@ -158,12 +158,14 @@ int main(int argc, char* argv[]) {
     string dirConf = "/.local/share/byterush";
 
     string pathsConf = home + dirConf + "/paths.conf";
+    string locationsConf = home + dirConf + "/locations.conf";
     
     map<string, function<void()>> commands = {
         {"help", help},
         {"add", [currentPath, pathsConf]() { addPath(currentPath, pathsConf); }},
         {"list", listPaths},
         {"delete", deletePath},
+        {"location", [currentPath, locationsConf]() { addPath(currentPath, locationsConf); }}
     };
 
     string command = argv[1];
