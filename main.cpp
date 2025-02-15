@@ -56,7 +56,7 @@ void writePathToFile(const string &currentPath, const string &filePath) {
     }
 }
 
-void addPath(string currentPath, string filePath) {
+void addPath(const string &currentPath, const string &filePath) {
     filesystem::path filePathObj = filePath;
     ofstream file(filePathObj, ios::app);
 
@@ -82,7 +82,7 @@ void addPath(string currentPath, string filePath) {
     writePathToFile(currentPath, filePath);
 }
 
-void savePaths(vector<string> paths) {
+void savePaths(const vector<string> &paths) {
     string home = getenv("HOME");
     filesystem::path dataBackup = home + "/.local/share/byterush/paths.conf";
 
@@ -162,10 +162,10 @@ int main(int argc, char* argv[]) {
     
     map<string, function<void()>> commands = {
         {"help", help},
-        {"add", [currentPath, pathsConf]() { addPath(currentPath, pathsConf); }},
+        {"add", [currentPath, pathsConf] { addPath(currentPath, pathsConf); }},
         {"list", listPaths},
         {"delete", deletePath},
-        {"location", [currentPath, locationsConf]() { addPath(currentPath, locationsConf); }}
+        {"location", [currentPath, locationsConf] { addPath(currentPath, locationsConf); }}
     };
 
     string command = argv[1];
