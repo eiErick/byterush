@@ -86,11 +86,15 @@ void savePaths(vector<string> paths) {
     filesystem::path dataBackup = home + "/.local/share/byterush/path";
 
     ofstream deleteFileBackup(dataBackup, ios::trunc);
+    deleteFileBackup.close();
+
     ofstream fileBackup(dataBackup, ios::app);
 
     for (string line : paths) {
         fileBackup << line << "\n";
     }
+
+    fileBackup.close();
 }
 
 vector<string> getPaths() {
