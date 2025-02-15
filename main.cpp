@@ -45,47 +45,41 @@ void help() {
     cout << "delete - delete a path with index" << endl;
 }
 
-void addPath() {
-    string home = getenv("HOME");
-    filesystem::path dataBackup = home + "/.local/share/byterush/paths.conf";
+void writePathToFile(const string &currentPath, const string &filePath) {
+    ofstream file(filePath, ios::app);
 
-    string path = filesystem::current_path();
-
-    if (filesystem::exists(dataBackup)) {
-        ofstream file(dataBackup, ios::app);
-
-        if (file) {
-            file << path << endl;
-            cout << "path " << path << " has been added successfully" << endl;
-        } else {
-            cout << "Error in add " << path << endl;
-        }
+    if (file) {
+        file << currentPath << endl;
+        cout << "Path " << currentPath << " has been added successfully in " << filePath << endl;
     } else {
-        filesystem::path dirParent = dataBackup.parent_path();
+        cerr << "Error in adding " << currentPath << endl;
+    }
+}
+
+void addPath(string currentPath, string filePath) {
+    filesystem::path filePathObj = filePath;
+    ofstream file(filePathObj, ios::app);
+
+    if (!filesystem::exists(filePathObj)) {
+        filesystem::path dirParent = filePathObj.parent_path();
+
         if (!filesystem::exists(dirParent)) {
             if (filesystem::create_directories(dirParent)) {
-                cout << "Created the backup data directory!\n";
+                cout << "Created the byterush directory!\n";
             } else {
                 cerr << "Failed to create directory :/\n";
             }
         }
-        
-        ofstream fileBackup(dataBackup, ios::app);
-        if (fileBackup) {
-            cout << "Backups data file created!\n";
-          
-            if (fileBackup.is_open()) {
-                fileBackup << path << "\n";
-                cout << "path " << path << " has been added successfully" << endl;
-            } else {
-                cout << "Error in add " << path << endl;
-            }
-          
-            fileBackup.close();
+
+        ofstream file(filePath);
+        if (file) {
+            cout << "file created!" << endl;
         } else {
-            cerr << "Failed to create backup data file :/\n";
+            cerr << "Failed to create directory :/" << endl;
         }
     }
+
+    writePathToFile(currentPath, filePath);
 }
 
 void savePaths(vector<string> paths) {
@@ -158,11 +152,18 @@ void deletePath() {
 }
 
 int main(int argc, char* argv[]) {
+    string currentPath = filesystem::current_path();
+
+    string home = getenv("HOME");
+    string dirConf = "/.local/share/byterush";
+
+    string pathsConf = home + dirConf + "/paths.conf";
+    
     map<string, function<void()>> commands = {
-        { "help", help },
-        { "add", addPath },
-        { "list", listPaths },
-        { "delete", deletePath},
+        {"help", help},
+        {"add", [currentPath, pathsConf]() { addPath(currentPath, pathsConf); }},
+        {"list", listPaths},
+        {"delete", deletePath},
     };
 
     string command = argv[1];
