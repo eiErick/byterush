@@ -34,8 +34,15 @@ string getUser() {
     return "Unknown";
 }
 
-string helpMsg() {
-    return "add - add current path for backup\n";
+string opening() {
+    return getUser() + ", hello in Byterush!\n";
+}
+
+void help() {
+    cout << opening() << endl;
+    cout << "add - add current path for backup" << endl;
+    cout << "list - list all saved paths" << endl;
+    cout << "delete - delete a path with index" << endl;
 }
 
 void addPath() {
@@ -150,25 +157,20 @@ void deletePath() {
     }
 }
 
-string opening() {
-    return getUser() + ", hello in Byterush!\n";
-}
-
 int main(int argc, char* argv[]) {
     map<string, function<void()>> commands = {
+        { "help", help },
         { "add", addPath },
         { "list", listPaths },
-        { "delete", deletePath}
+        { "delete", deletePath},
     };
 
     string command = argv[1];
 
-    // cout << opening() << endl;
-
     if (commands.count(command)) {
         commands[command]();
     } else {
-        cout << helpMsg() << endl;
+        help();
     }
 
     return 0;
