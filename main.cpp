@@ -82,39 +82,35 @@ void addPath(const string &currentPath, const string &filePath) {
     writePathToFile(currentPath, filePath);
 }
 
-void savePaths(const vector<string> &paths) {
-    string home = getenv("HOME");
-    filesystem::path dataBackup = home + "/.local/share/byterush/paths.conf";
+void savePaths(const string &filePath, const vector<string> &paths) {
+    filesystem::path filePathObj = filePath;
 
-    ofstream deleteFileBackup(dataBackup, ios::trunc);
+    ofstream deleteFileBackup(filePathObj, ios::trunc);
     deleteFileBackup.close();
 
-    ofstream fileBackup(dataBackup, ios::app);
+    ofstream file(filePathObj, ios::app);
 
     for (string line : paths) {
-        fileBackup << line << "\n";
+        file << line << "\n";
     }
-
-    fileBackup.close();
 }
 
-vector<string> getPaths() {
+vector<string> getPaths(const string &filePath) {
     vector<string> lines;
 
-    string home = getenv("HOME");
-    ifstream backupPaths(home + "/.local/share/byterush/paths.conf");
+    ifstream paths(filePath);
     
     string line;
 
-    while(getline(backupPaths, line)) {
+    while(getline(paths, line)) {
         lines.push_back(line);
     }
 
     return lines;
 }
 
-void listPaths() {
-    vector<string> lines = getPaths();
+void listPaths(const string &filePath) {
+    vector<string> lines = getPaths(filePath);
 
     cout << "Listing paths:\n\n";
 
@@ -125,7 +121,7 @@ void listPaths() {
     }
 }
 
-void deletePath() {
+void deletePath(const string &filePath) {
     int index;
     char confirm;
 
@@ -133,7 +129,7 @@ void deletePath() {
     cin >> index;
     index--;
 
-    vector<string> paths = getPaths();
+    vector<string> paths = getPaths(filePath);
     
     if (index + 1 > paths.size() && index < 1) {
         cerr << "Invalid index :/" << endl;
@@ -145,7 +141,7 @@ void deletePath() {
         
         if (confirm == 'y') {
             paths.erase(paths.begin() + index);
-            savePaths(paths);
+            savePaths(filePath, paths);
             cout << "Path deleted" << endl;
         }
     }
@@ -163,8 +159,8 @@ int main(int argc, char* argv[]) {
     map<string, function<void()>> commands = {
         {"help", help},
         {"add", [currentPath, pathsConf] { addPath(currentPath, pathsConf); }},
-        {"list", listPaths},
-        {"delete", deletePath},
+        {"list", [pathsConf] { listPaths(pathsConf); }},
+        {"delete", [pathsConf] { deletePath(pathsConf); }},
         {"location", [currentPath, locationsConf] { addPath(currentPath, locationsConf); }}
     };
 
