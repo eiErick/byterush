@@ -45,6 +45,31 @@ void help() {
     cout << "delete - delete a path with index" << endl;
 }
 
+vector<string> getPaths(const string &filePath) {
+    ifstream paths(filePath);
+
+    vector<string> lines;
+    string line;
+
+    while(getline(paths, line)) {
+        lines.push_back(line);
+    }
+
+    return lines;
+}
+
+bool validatePath(const string &currentPath, const string &filePath) {
+    vector<string> paths = getPaths(filePath);
+
+    for (string line : paths) {
+        if (line == currentPath) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void writePathToFile(const string &currentPath, const string &filePath) {
     ofstream file(filePath, ios::app);
 
@@ -79,7 +104,11 @@ void addPath(const string &currentPath, const string &filePath) {
         }
     }
 
-    writePathToFile(currentPath, filePath);
+    if (validatePath(currentPath, filePath)) {
+        writePathToFile(currentPath, filePath);
+    } else {
+        cout << "This path is already stored! :)" << endl;
+    }
 }
 
 void savePaths(const string &filePath, const vector<string> &paths) {
@@ -93,20 +122,6 @@ void savePaths(const string &filePath, const vector<string> &paths) {
     for (string line : paths) {
         file << line << "\n";
     }
-}
-
-vector<string> getPaths(const string &filePath) {
-    vector<string> lines;
-
-    ifstream paths(filePath);
-    
-    string line;
-
-    while(getline(paths, line)) {
-        lines.push_back(line);
-    }
-
-    return lines;
 }
 
 void listPaths(const string &filePath) {
