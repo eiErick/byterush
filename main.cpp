@@ -81,6 +81,18 @@ void addPath() {
     }
 }
 
+void savePaths(vector<string> paths) {
+    string home = getenv("HOME");
+    filesystem::path dataBackup = home + "/.local/share/byterush/path";
+
+    ofstream deleteFileBackup(dataBackup, ios::trunc);
+    ofstream fileBackup(dataBackup, ios::app);
+
+    for (string line : paths) {
+        fileBackup << line << "\n";
+    }
+}
+
 vector<string> getPaths() {
     vector<string> lines;
 
@@ -108,14 +120,41 @@ void listPaths() {
     }
 }
 
+void deletePath() {
+    int index;
+    char confirm;
+
+    cout << "Enter the path index: ";
+    cin >> index;
+    index--;
+
+    vector<string> paths = getPaths();
+    
+    if (index + 1 > paths.size() && index < 1) {
+        cerr << "Invalid index :/" << endl;
+    } else {
+        string path = paths[index];
+
+        cout << "Do you want delete? " << path << " [y/n] ";
+        cin >> confirm;
+        
+        if (confirm == 'y') {
+            paths.erase(paths.begin() + index);
+            savePaths(paths);
+            cout << "Path deleted" << endl;
+        }
+    }
+}
+
 string opening() {
     return getUser() + ", hello in Byterush!\n";
 }
 
 int main(int argc, char* argv[]) {
     map<string, function<void()>> commands = {
-        {"add", addPath},
-        {"list", listPaths}
+        { "add", addPath },
+        { "list", listPaths },
+        { "delete", deletePath}
     };
 
     string command = argv[1];
