@@ -47,7 +47,7 @@ void help() {
 
 void addPath() {
     string home = getenv("HOME");
-    filesystem::path dataBackup = home + "/.local/share/byterush/path";
+    filesystem::path dataBackup = home + "/.local/share/byterush/paths.conf";
 
     string path = filesystem::current_path();
 
@@ -90,7 +90,7 @@ void addPath() {
 
 void savePaths(vector<string> paths) {
     string home = getenv("HOME");
-    filesystem::path dataBackup = home + "/.local/share/byterush/path";
+    filesystem::path dataBackup = home + "/.local/share/byterush/paths.conf";
 
     ofstream deleteFileBackup(dataBackup, ios::trunc);
     deleteFileBackup.close();
@@ -108,7 +108,7 @@ vector<string> getPaths() {
     vector<string> lines;
 
     string home = getenv("HOME");
-    ifstream backupPaths(home + "/.local/share/byterush/path");
+    ifstream backupPaths(home + "/.local/share/byterush/paths.conf");
     
     string line;
 
